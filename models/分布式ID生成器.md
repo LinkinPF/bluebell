@@ -34,8 +34,12 @@ snowflake-64bit 分布如下：
 是一个相当轻量化的snowflake的go实现，数据格式就是按照上面的数据格式来的；
 支持动态调整位数，例如工作机器ID占用10位，可以自己定义数据中心ID和工作节点ID
 
+2. github.com/sony/sonyflake
+索尼公司的开源项目，基本思路和上面的差不多，但是在位分配上稍有不同
+1bit-unused      39bits-timestamp      8bits-sequenceID      16bitis-machine ID 
 
+它的想法是时间只用了39bits，但是时间单位变成了10ms，所以理论上支持176年，看来索尼对自己还是比较自信的。
 
-
+索尼的这个包先省略
 
 
