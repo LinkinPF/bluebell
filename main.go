@@ -49,7 +49,7 @@ func main() {
 
 	// 6、启动服务（优雅关机）
 	srv := &http.Server{
-		Addr:    fmt.Sprintf(":%d", settings.Conf.Port),
+		Addr:    fmt.Sprintf(":%d", settings.Conf.AppConfig.Port),
 		Handler: r,
 	}
 

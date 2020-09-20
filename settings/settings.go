@@ -6,18 +6,22 @@ import (
 	"github.com/spf13/viper"
 )
 
-var Conf = new(AppConfig)
+var Conf = new(Config)
 
-type AppConfig struct {
-	Name         string `mapstructure:"name"`
-	Mode         string `mapstructure:"mode"`
-	Version      string `mapstructure:"version"`
-	Port         int    `mapstructure:"port"`
-	StartTime    string `mapstructure:"starttime"`
-	MachineID    int64  `mapstructure:"machineid"`
+type Config struct {
+	*AppConfig   `mapstructure:"app"`
 	*LogConfig   `mapstructure:"log"`
 	*MySQLConfig `mapstructure:"mysql"`
 	*RedisConfig `mapstructure:"redis"`
+}
+
+type AppConfig struct {
+	Name      string `mapstructure:"name"`
+	Mode      string `mapstructure:"mode"`
+	Version   string `mapstructure:"version"`
+	Port      int    `mapstructure:"port"`
+	StartTime string `mapstructure:"start_time"`
+	MachineID int64  `mapstructure:"machine_id"`
 }
 
 type LogConfig struct {
@@ -56,7 +60,6 @@ func Init() (err error) {
 	// 配置文件位置可以配置多个
 	viper.SetConfigName("config") // 所以在目录下不要写同名字的配置文件，因为会混乱
 	viper.AddConfigPath(".")
-
 	// 下面这个基本是通过配置中心使用的，例如远程的etcd，告诉viper当前的数据使用什么格式去解析
 	// viper.SetConfigType("yaml")
 
@@ -70,10 +73,9 @@ func Init() (err error) {
 	}
 
 	// 把读取到的配置信息反序列化到Conf变量中
-	if err := viper.Unmarshal(Conf); err != nil {
+	if err := viper.Unmarshal(&Conf); err != nil {
 		fmt.Println("viper.Unmarshal failed, err:", err)
 	}
-
 	// 支持热加载
 	viper.WatchConfig()
 	viper.OnConfigChange(func(e fsnotify.Event) {
