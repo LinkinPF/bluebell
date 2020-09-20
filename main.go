@@ -3,19 +3,16 @@ package main
 import (
 	"context"
 	"fmt"
+	"go.uber.org/zap"
 	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
 
-	"go.uber.org/zap"
-
-	"bluebell/dao/mysql"
 	"bluebell/logger"
 	"bluebell/routes"
 	"bluebell/settings"
-	"bluebell/pkg/snowflake"
 )
 
 // go 开发比较通用的脚手架
@@ -33,19 +30,19 @@ func main() {
 	}
 	defer zap.L().Sync()
 	// 3、初始化mysql
-	if err := mysql.Init(settings.Conf.MySQLConfig); err != nil {
-		fmt.Println("Init logger failed, err:", err)
-		return
-	}
-	defer mysql.Close()
+	//if err := mysql.Init(settings.Conf.MySQLConfig); err != nil {
+	//	fmt.Println("Init mysql failed, err:", err)
+	//	return
+	//}
+	//defer mysql.Close()
 	// 4、初始化redis连接
 	// 这个暂时先放下
 
 	// 在这里初始化一下 snowflake
-	if err := snowflake.Init(settings.Conf.StartTime, settings.Conf.MachineID); err != nil {
-		fmt.Println("Init snowflake failed, err:", err)
-		return
-	}
+	//if err := snowflake.Init(settings.Conf.StartTime, settings.Conf.MachineID); err != nil {
+	//	fmt.Println("Init snowflake failed, err:", err)
+	//	return
+	//}
 
 	// 5、注册路由
 	r := routes.SetupRouter()
@@ -59,7 +56,7 @@ func main() {
 	go func() {
 		// 开启一个 goroutine 启动服务
 		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			zap.L().Error("listen faied :", zap.Error(err))
+			zap.L().Error("listen failed :", zap.Error(err))
 		}
 	}()
 

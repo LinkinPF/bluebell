@@ -16,6 +16,13 @@ import (
 	"go.uber.org/zap/zapcore"
 )
 
+/*
+	之后记录日志的方法：
+		zap.L().Error(" ", zap.Error( err error ))
+		zap.L().Error(" ", zap.String( key string, val string ))
+		zap.L().Error(" ", zap.Any( key string, value interface{} ))
+*/
+
 // InitLogger 初始化Logger
 func Init(cfg *settings.LogConfig) (err error) {
 	writeSyncer := getLogWriter(
