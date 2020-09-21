@@ -39,7 +39,12 @@ func SignUpHandler(c *gin.Context) {
 
 	// 2、业务处理 ---- logic 层
 	// 一般创建的就返回错误，如果是 查询的就返回的是数据了
-	logic.SignUp(p)
+	if err := logic.SignUp(p); err != nil {
+		c.JSON(http.StatusOK, gin.H{
+			"msg": "signup failed",
+		})
+		return
+	}
 
 	// 3、返回响应
 	c.JSON(http.StatusOK, gin.H{

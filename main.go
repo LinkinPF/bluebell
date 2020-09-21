@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bluebell/pkg/snowflake"
 	"context"
 	"fmt"
 	"go.uber.org/zap"
@@ -39,10 +40,10 @@ func main() {
 	// 这个暂时先放下
 
 	// 在这里初始化一下 snowflake
-	//if err := snowflake.Init(settings.Conf.StartTime, settings.Conf.MachineID); err != nil {
-	//	fmt.Println("Init snowflake failed, err:", err)
-	//	return
-	//}
+	if err := snowflake.Init(settings.Conf.StartTime, settings.Conf.MachineID); err != nil {
+		fmt.Println("Init snowflake failed, err:", err)
+		return
+	}
 
 	// todo:翻译器，validator库参数校验若干实用技巧
 
