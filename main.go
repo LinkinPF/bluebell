@@ -47,6 +47,10 @@ func main() {
 	// 5、注册路由
 	r := routes.SetupRouter()
 
+	// 测试配置文件读取是否正确
+	//fmt.Printf("Conf:%#v\n", settings.Conf.AppConfig)
+	//fmt.Printf("Conf:%#v\n", settings.Conf.LogConfig)
+
 	// 6、启动服务（优雅关机）
 	srv := &http.Server{
 		Addr:    fmt.Sprintf(":%d", settings.Conf.AppConfig.Port),
