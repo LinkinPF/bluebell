@@ -44,6 +44,8 @@ func main() {
 	//	return
 	//}
 
+	// todo:翻译器，validator库参数校验若干实用技巧
+
 	// 5、注册路由
 	r := routes.SetupRouter()
 
