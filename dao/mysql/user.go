@@ -15,6 +15,12 @@ import (
 
 const secret = "LMP"
 
+var (
+	ErrorUserExist       = errors.New("用户已存在")
+	ErrorUserNotExist    = errors.New("用户不存在呢")
+	ErrorInvalidPassword = errors.New("密码错误")
+)
+
 // CheckUserExist 检查一个用户是否存在
 func CheckUserExist(username string) error {
 	sqlStr := `select count(user_ifd) from user where username = ?`
@@ -23,7 +29,7 @@ func CheckUserExist(username string) error {
 		return err
 	}
 	if count > 0 {
-		return errors.New("用户已存在")
+		return ErrorUserExist
 	}
 	return nil
 }
@@ -51,7 +57,7 @@ func Login(user *models.User) (err error) {
 	err = db.Get(user, sqlStr, user.Username)
 
 	if err == sql.ErrNoRows {
-		return errors.New("用户不存在呢")
+		return ErrorUserNotExist
 	}
 
 	if err != nil {
@@ -61,7 +67,7 @@ func Login(user *models.User) (err error) {
 
 	password := encryptPassword(oPassword)
 	if password == user.Password {
-		return errors.New("密码错误")
+		return ErrorInvalidPassword
 	}
 
 	return

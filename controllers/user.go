@@ -1,11 +1,11 @@
 package controllers
 
 import (
+	"bluebell/dao/mysql"
 	"bluebell/logic"
 	"bluebell/models"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
-	"net/http"
 )
 
 // SignUPHandler 函数处理注册请求
@@ -17,9 +17,7 @@ func SignUpHandler(c *gin.Context) {
 	// todo:参数校验输出错误的时候把英文翻译成英文，validator库参数校验若干实用技巧
 	if err := c.ShouldBindJSON(p); err != nil { // 只能检测请求的格式、类型对不对
 		zap.L().Error("SignUp with invalid param", zap.Error(err))
-		c.JSON(http.StatusOK, gin.H{
-			"message": err.Error(),
-		})
+		ResponseError(c, CodeInvalidParam)
 		return
 	}
 	// 手动对请求参数进行详细的业务
@@ -40,16 +38,16 @@ func SignUpHandler(c *gin.Context) {
 	// 2、业务处理 ---- logic 层
 	// 一般创建的就返回错误，如果是 查询的就返回的是数据了
 	if err := logic.SignUp(p); err != nil {
-		c.JSON(http.StatusOK, gin.H{
-			"msg": "signup failed",
-		})
+		if errors.Is(err, mysql.ErrorUserExist) {
+			zap.L().Error("SignUp with User Exists", zap.Error(err))
+			ResponseError(c, CodeUserExist)
+		}
+		ResponseError(c, CodeServerBusy)
 		return
 	}
 
 	// 3、返回响应
-	c.JSON(http.StatusOK, gin.H{
-		"msg": "success",
-	})
+	ResponseSuccess(c, nil)
 }
 
 func LoginHandler(c *gin.Context) {
@@ -57,20 +55,17 @@ func LoginHandler(c *gin.Context) {
 	p := new(models.ParamLogin)
 	if err := c.ShouldBindJSON(p); err != nil {
 		zap.L().Error("Login with invalid param", zap.Error(err))
-		c.JSON(http.StatusOK, gin.H{
-			"message": err.Error(),
-		})
+		ResponseError(c, CodeInvalidParam)
 		return
 	}
 	// 2、业务逻辑处理
 	if err := logic.Login(p); err != nil {
 		zap.L().Error("logic.Login failed", zap.Error(err))
-		c.JSON(http.StatusOK, gin.H{
-			"msg": "用户名密码错误",
-		})
+		if errors.Is(err, mysql.ErrorUserExist) {
+			ResponseError(c, CodeUserNotExist)
+		}
+		ResponseError(c, CodeServerBusy)
 	}
 	// 3、返回响应
-	c.JSON(http.StatusOK, gin.H{
-		"msg": "登录成功",
-	})
+	ResponseSuccess(c, nil)
 }
