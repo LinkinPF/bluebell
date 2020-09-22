@@ -7,7 +7,12 @@ import (
 	"net/http"
 )
 
-func SetupRouter() *gin.Engine {
+func SetupRouter(mode string) *gin.Engine {
+	// 设置成发布模式就不会在终端打印日志了
+	if mode == gin.ReleaseMode {
+		gin.SetMode(gin.ReleaseMode)
+	}
+
 	r := gin.New()
 
 	r.Use(logger.GinLogger(), logger.GinRecovery(true))

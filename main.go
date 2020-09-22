@@ -25,7 +25,7 @@ func main() {
 		return
 	}
 	// 2、初始化日志
-	if err := logger.Init(settings.Conf.LogConfig); err != nil {
+	if err := logger.Init(settings.Conf.LogConfig, settings.Conf.AppConfig.Mode); err != nil {
 		fmt.Println("Init logger failed, err:", err)
 		return
 	}
@@ -48,7 +48,7 @@ func main() {
 	// todo:翻译器，validator库参数校验若干实用技巧
 
 	// 5、注册路由
-	r := routes.SetupRouter()
+	r := routes.SetupRouter(settings.Conf.AppConfig.Mode)
 
 	// 测试配置文件读取是否正确
 	//fmt.Printf("Conf:%#v\n", settings.Conf.AppConfig)
